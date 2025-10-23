@@ -36,7 +36,8 @@
 
 .hero {
   position: relative;
-  background-image: URL("/images/ba_at_night.jpeg");
+  /* Use a path relative to this CSS file so it works when served from a subpath */
+  background-image: url("../images/ba_at_night.jpeg");
   background-size: cover;
   background-position: center;
   height: 70vh;
@@ -247,4 +248,55 @@ footer {
   width: 100%;
   height: auto;
 
+}
+
+/* === Currency page styles (namespaced) === */
+.currency-page .container {
+  max-width: 760px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.currency-page .card {
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.currency-page .row {
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+  margin-bottom: .75rem;
+}
+
+.currency-page input[type="number"] {
+  width: 100%;
+  padding: .5rem;
+}
+
+.currency-page select {
+  padding: .45rem;
+}
+
+.currency-page button {
+  padding: .5rem 0.9rem;
+}
+
+.currency-page pre {
+  background: #f6f8fa;
+  padding: .75rem;
+  border-radius: 4px;
+}
+
+@media (max-width: 520px) {
+  .currency-page .row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .currency-page .row label {
+    width: 100%;
+  }
 }

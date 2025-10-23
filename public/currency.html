@@ -1,13 +1,151 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Currency Converter — Argentina Travel Guide</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 
-<body>
+<body class="currency-page">
+
+    <header style="padding:1rem; text-align:left">
+        <a href="index.html">← Home</a>
+    </header>
+
+    <main class="container">
+        <h1>Currency Converter</h1>
+
+        <section class="card" aria-labelledby="rates-heading">
+            <h2 id="rates-heading">Latest rates (via server proxy)</h2>
+            <p>
+                This page fetches the latest exchange rates from the server proxy <code>/api/rates</code>.
+                The API key stays on the server and is not exposed to the browser.
+            </p>
+
+            <div id="rates-status">Loading rates…</div>
+
+            <div id="rates-list" aria-live="polite" style="margin-top:.75rem"></div>
+        </section>
+
+        <section class="card" style="margin-top:1rem" aria-labelledby="convert-heading">
+            <h2 id="convert-heading">Convert currency</h2>
+            <form id="convert-form">
+                <div class="row">
+                    <label for="amount">Amount</label>
+                    <input id="amount" name="amount" type="number" step="any" value="1" min="0" required>
+                </div>
+
+                <div class="row">
+                    <label for="from">From</label>
+                    <select id="from" name="from">
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                        <option value="GBP">GBP</option>
+                        <option value="ARS">ARS</option>
+                    </select>
+
+                    <label for="to">To</label>
+                    <select id="to" name="to">
+                        <option value="ARS">ARS</option>
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                        <option value="GBP">GBP</option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <button type="submit">Convert</button>
+                    <button id="refresh" type="button">Refresh rates</button>
+                </div>
+            </form>
+
+            <div id="convert-result" style="margin-top:.75rem"></div>
+        </section>
+
+        <section style="margin-top:1rem">
+            <h3>Raw response</h3>
+            <pre id="raw-response">(not loaded)</pre>
+        </section>
+    </main>
+
+    <script>
+        // Minimal client-side logic to fetch from /api/rates and do conversions.
+        const ratesStatus = document.getElementById('rates-status');
+        const ratesList = document.getElementById('rates-list');
+        const rawResponse = document.getElementById('raw-response');
+        const convertForm = document.getElementById('convert-form');
+        const convertResult = document.getElementById('convert-result');
+
+        let latestRates = null; // shape: { base: 'USD', rates: { ARS: 300, ... } }
+
+        async function fetchRates() {
+            ratesStatus.textContent = 'Loading rates…';
+            try {
+                const resp = await fetch('/api/rates');
+                if (!resp.ok) throw new Error('Network response was not ok: ' + resp.status);
+                const data = await resp.json();
+                latestRates = data;
+                renderRates(data);
+                rawResponse.textContent = JSON.stringify(data, null, 2);
+                ratesStatus.textContent = '';
+            } catch (err) {
+                ratesStatus.textContent = 'Failed to load rates: ' + err.message;
+                ratesList.textContent = '';
+                rawResponse.textContent = '(error) ' + err.message;
+                latestRates = null;
+            }
+        }
+
+        function renderRates(data) {
+            if (!data || !data.rates) {
+                ratesList.textContent = 'No rates available.';
+                return;
+            }
+            const base = data.base || Object.keys(data.rates)[0] || 'USD';
+            const rows = Object.entries(data.rates).slice(0, 10).map(([k, v]) => {
+                return `<div><strong>${k}</strong>: ${v}</div>`;
+            }).join('');
+            ratesList.innerHTML = `<div>Base: <strong>${base}</strong></div>${rows}`;
+        }
+
+        convertForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!latestRates || !latestRates.rates) {
+                convertResult.textContent = 'Rates not loaded yet.';
+                return;
+            }
+
+            const amount = parseFloat(document.getElementById('amount').value);
+            const from = document.getElementById('from').value;
+            const to = document.getElementById('to').value;
+
+            // If the API returns rates relative to some base, we convert via that base.
+            const rates = latestRates.rates;
+            const base = latestRates.base || Object.keys(rates)[0];
+
+            // We need numeric rates for 'from' and 'to' relative to the base.
+            const rateFrom = (from === base) ? 1 : rates[from];
+            const rateTo = (to === base) ? 1 : rates[to];
+
+            if (!rateFrom || !rateTo) {
+                convertResult.textContent = `Missing rate for ${from} or ${to}`;
+                return;
+            }
+
+            // Convert amount -> base -> target
+            const amountInBase = (from === base) ? amount : amount / rateFrom;
+            const converted = amountInBase * rateTo;
+
+            convertResult.innerHTML = `${amount} ${from} ≈ <strong>${converted.toFixed(4)}</strong> ${to}`;
+        });
+
+        document.getElementById('refresh').addEventListener('click', fetchRates);
+
+        // Initial load
+        fetchRates();
+    </script>
 
 </body>
 
