@@ -9,8 +9,8 @@ const lastUpdated = ref('');
 
 // IMPORTANT: Replace with your actual API key
 // It's best to store this in an environment variable
-const API_KEY = 'YOUR_API_KEY_HERE';
-const freecurrencyapi = new Freecurrencyapi(API_KEY);
+const apiKey = import.meta.env.VITE_FREECURRENCYAPI_KEY;
+const freecurrencyapi = new Freecurrencyapi(apiKey);
 
 async function loadRates() {
     loading.value = true;
