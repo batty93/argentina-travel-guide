@@ -1,17 +1,17 @@
 import { fileURLToPath, URL } from 'node:url'
-
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // 1. Move "base" out of plugins and into the main object
+  base: './',
+
   plugins: [
-    vue(),
-    vueDevTools(),
+    vue(), // Plugins array should ONLY contain plugin functions
   ],
+
   server: {
-    // Proxy `/api` requests during development to the local Express proxy
     proxy: {
       '/api': {
         target: 'http://localhost:3000',
@@ -20,6 +20,7 @@ export default defineConfig({
       },
     },
   },
+
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
