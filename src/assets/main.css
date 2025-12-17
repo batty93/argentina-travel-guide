@@ -1,0 +1,81 @@
+.card {
+    background: #f8f8f8;
+    border: 1px solid #ccc;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    text-align: center;
+    max-width: 400px;
+    margin: 2rem auto;
+}
+
+.error {
+    color: red;
+}
+
+.rates-list-items {
+    list-style: none;
+    padding: 0;
+}
+
+.last-updated {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 1rem;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+    margin-top: 2rem;
+}
+
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border-left-color: #42b883;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.chart-controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.chart-controls button {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+.chart-controls button.active {
+    background-color: #42b883;
+    color: white;
+    border-color: #42b883;
+}

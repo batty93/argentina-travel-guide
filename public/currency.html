@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Converter — Argentina Travel Guide</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="container nav">
+            <nav class="links">
+                <a href="index.html">Home</a>
+                <a href="index.html#destinations">Destinations</a>
+                <a href="index.html#activities">Activities</a>
+                <a href="index.html#plan">Plan Your Trip</a>
+                <a href="currency.html" class="btn-nav">Currency</a>
+                <a href="index.html#blog">Blog</a>
+                <a href="contact.html">About Us</a>
+            </nav>
+        </div>
+    </header>
+
+    <div id="app">
+        <main class="container">
+            <section class="card">
+                <h1>Currency Rates</h1>
+                <div v-if="loading">Loading...</div>
+                <div v-else-if="fetchError" class="error">
+                    <p><strong>Error:</strong> {{ fetchError }}</p>
+                    <p>Could not load currency data. Please try again later.</p>
+                </div>
+                <div v-else-if="rates">
+                    <ul class="rates-list-items">
+                        <li v-for="(rate, code) in rates" :key="code">
+                            <strong>{{ code }}:</strong> {{ parseFloat(rate).toFixed(4) }}
+                        </li>
+                    </ul>
+                    <p class="last-updated">Last updated: {{ lastUpdated }}</p>
+                    <button @click="loadRates" class="mt-4">Refresh</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://www.exchangerate-api.com"></script>
+    <script src="js/app.js"></script>
+
+</body>
+
+</html>
